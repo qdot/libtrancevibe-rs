@@ -1,6 +1,5 @@
-#[cfg(test)]
-mod test {
-    #[test]
-    fn it_works() {
-    }
-}
+extern crate libusb;
+
+pub use ::libtrancevibe::{TranceVibe};
+
+mod libtrancevibe;
