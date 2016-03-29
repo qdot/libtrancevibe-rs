@@ -4,62 +4,71 @@ use std::time::Duration;
 const VID: u16 = 0xb49;
 const PID: u16 = 0x64f;
 
-struct TranceVibeDevice<'a> {
-    handle: libusb::DeviceHandle<'a>,
-    language: libusb::Language,
-    timeout: Duration
-}
-
 pub struct TranceVibe<'a> {
     context: libusb::Context,
-    device: Option<TranceVibeDevice<'a>>,
-    inbound: Option<libusb::TransferType>,
-    outbound: Option<libusb::TransferType>,
+    device: Option<libusb::Device<'a>>,
+    handle: Option<libusb::DeviceHandle<'a>>,
+    bus_number: u8,
+    address: u8,
     opened: bool,
 }
 
 impl<'a> TranceVibe<'a> {
-    pub fn new() -> TranceVibe<'a> {
+    pub fn new(bus_number: u8, address: u8) -> TranceVibe<'a> {
         TranceVibe {
-            context: match libusb::Context::new() {
-                Ok(c) => c,
-                Err(e) => panic!("Cannot initialize libusb context!")
-            },
+            context: libusb::Context::new().unwrap(),
             device: None,
-            inbound: None,
-            outbound: None,
+            bus_number: bus_number,
+            address: address,
+            handle: None,
             opened: false,
         }
     }
 
-    pub fn count(&mut self) -> libusb::Result<u8> {
-        let timeout = Duration::from_secs(1);
-        let mut count = 0u8;
-        for mut device in try!(self.context.devices()).iter() {
-            let device_desc = match device.device_descriptor() {
+    pub fn open(&'a mut self) -> libusb::Result<()> {
+        for mut dev in try!(self.context.devices()).iter() {
+            let device_desc = match dev.device_descriptor() {
                 Ok(d) => d,
                 Err(_) => continue
             };
-            if device_desc.vendor_id() != VID {
-                continue;
-            }
-            if device_desc.product_id() != PID {
-                continue;
-            }
-            count += 1;
+            if device_desc.vendor_id() != VID ||
+                device_desc.product_id() != PID ||
+                dev.bus_number() != self.bus_number ||
+                dev.address() != self.address {
+                    continue;
+                }
+            self.device = Some(dev);
+            break;
         }
-        return Ok(count);
-    }
-
-    pub fn open(&mut self, index: u8) -> libusb::Result<()> {
         return Ok(());
     }
 
-    pub fn close(&mut self) -> libusb::Result<()> {
+    pub fn close(&'a mut self) -> libusb::Result<()> {
         return Ok(());
     }
 
-    pub fn set(&self, speed : u8) -> libusb::Result<()> {
+    pub fn set(&'a mut self, speed : u8) -> libusb::Result<()> {
         return Ok(());
     }
+}
+
+pub fn get_devices<'a>() -> libusb::Result<Vec<TranceVibe<'a>>> {
+    let mut context = match libusb::Context::new() {
+        Ok(c) => c,
+        Err(e) => panic!("Cannot initialize libusb context!")
+    };
+    let timeout = Duration::from_secs(1);
+    let mut devices = Vec::<TranceVibe>::new();
+    for mut device in try!(context.devices()).iter() {
+        let device_desc = match device.device_descriptor() {
+            Ok(d) => d,
+            Err(_) => continue
+        };
+        if device_desc.vendor_id() != VID ||
+            device_desc.product_id() != PID {
+                continue;
+            }
+        devices.push(TranceVibe::new(device.bus_number(), device.address()));
+    }
+    return Ok(devices);
 }

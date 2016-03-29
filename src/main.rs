@@ -1,9 +1,6 @@
 extern crate libtrancevibe;
 
 fn main() {
-    let mut tv = libtrancevibe::TranceVibe::new();
-    match tv.count() {
-        Ok(c) => println!("Number of Trance Vibrators Available: {}", c),
-        Err(_) => println!("Cannot count devices!")
-    }
+    let devices = libtrancevibe::get_devices().unwrap();
+    println!("Number of trancevibes connected: {}", devices.len());
 }
