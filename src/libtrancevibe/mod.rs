@@ -6,22 +6,21 @@ const PID: u16 = 0x64f;
 
 pub struct TranceVibe<'a> {
     context: libusb::Context,
-    device: Option<libusb::Device<'a>>,
     handle: Option<libusb::DeviceHandle<'a>>,
     bus_number: u8,
-    address: u8,
-    opened: bool,
+    address: u8
 }
 
 impl<'a> TranceVibe<'a> {
     pub fn new(bus_number: u8, address: u8) -> TranceVibe<'a> {
         TranceVibe {
-            context: libusb::Context::new().unwrap(),
-            device: None,
+            context: match libusb::Context::new() {
+                Ok(c) => c,
+                Err(_) => panic!("Can't create context!")
+            },
             bus_number: bus_number,
             address: address,
-            handle: None,
-            opened: false,
+            handle: None
         }
     }
 
@@ -37,18 +36,17 @@ impl<'a> TranceVibe<'a> {
                 dev.address() != self.address {
                     continue;
                 }
-            self.device = Some(dev);
+            self.handle = match dev.open() {
+                Ok(h) => Some(h),
+                Err(_) => panic!("Can't open device!")
+            };
             break;
         }
-        return Ok(());
+        Ok(())
     }
 
-    pub fn close(&'a mut self) -> libusb::Result<()> {
-        return Ok(());
-    }
-
-    pub fn set(&'a mut self, speed : u8) -> libusb::Result<()> {
-        return Ok(());
+    pub fn set(&mut self, speed : u8) -> libusb::Result<()> {
+        Ok(())
     }
 }
 
@@ -70,5 +68,5 @@ pub fn get_devices<'a>() -> libusb::Result<Vec<TranceVibe<'a>>> {
             }
         devices.push(TranceVibe::new(device.bus_number(), device.address()));
     }
-    return Ok(devices);
+    Ok(devices)
 }
