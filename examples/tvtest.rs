@@ -5,8 +5,9 @@ use std::thread::sleep;
 fn main() {
     let mut devices = match libtrancevibe::get_devices() {
         Ok(d) => d,
-        Err(_) => panic!("Cannot enumerate devices!")
+        Err(_) => panic!("Cannot enumerate devices!"),
     };
+
     println!("Number of devices connected: {}", devices.len());
     if devices.len() == 0 {
         return;
@@ -14,11 +15,14 @@ fn main() {
     let mut device = devices.pop().unwrap();
     let mut dev;
     match device.open() {
-        Some(d) => dev = *d,
-        None => panic!("Can't open device!")
+        Some(d) => dev = d,
+        None => panic!("Can't open device!"),
     };
-
-    dev.set(255);
+    if dev.set(255).is_err() {
+        panic!("Error setting speed!");
+    }
     sleep(Duration::from_secs(1));
-    dev.set(0);
+    if dev.set(0).is_err() {
+        panic!("Error setting speed!");
+    }
 }

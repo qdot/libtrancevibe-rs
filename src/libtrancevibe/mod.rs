@@ -7,32 +7,29 @@ const PID: u16 = 0x64f;
 pub struct TranceVibeDeviceInfo {
     context: libusb::Context,
     bus_number: u8,
-    address: u8
+    address: u8,
 }
 
 pub struct TranceVibeDevice<'a> {
     device: libusb::DeviceHandle<'a>,
-    desc: libusb::DeviceDescriptor
 }
 
 impl<'a> TranceVibeDevice<'a> {
-    pub fn new(device: libusb::DeviceHandle<'a>, desc: libusb::DeviceDescriptor) -> TranceVibeDevice<'a> {
-        TranceVibeDevice {
-            device: device,
-            desc: desc
-        }
+    pub fn new(device: libusb::DeviceHandle<'a>) -> TranceVibeDevice<'a> {
+        TranceVibeDevice { device: device }
     }
 
-    pub fn set(&mut self, speed: u8) -> bool {
+    pub fn set(&mut self, speed: u8) -> libusb::Result<usize> {
         let timeout = Duration::from_secs(1);
-        let bytes : [u8;0] = [];
-        self.device.write_control(libusb::request_type(libusb::Direction::Out, libusb::RequestType::Vendor, libusb::Recipient::Interface),
-                                  1,
-                                  speed as u16,
-                                  0,
-                                  &bytes,
-                                  timeout);
-        true
+        let bytes: [u8; 0] = [];
+        return self.device.write_control(libusb::request_type(libusb::Direction::Out,
+                                                              libusb::RequestType::Vendor,
+                                                              libusb::Recipient::Interface),
+                                         1,
+                                         speed as u16,
+                                         0,
+                                         &bytes,
+                                         timeout);
     }
 }
 
@@ -41,33 +38,31 @@ impl TranceVibeDeviceInfo {
         TranceVibeDeviceInfo {
             context: match libusb::Context::new() {
                 Ok(c) => c,
-                Err(_) => panic!("Can't create context!")
+                Err(_) => panic!("Can't create context!"),
             },
             bus_number: bus_number,
-            address: address
+            address: address,
         }
     }
 
-    pub fn open(&mut self) -> Option<Box<TranceVibeDevice>> {
+    pub fn open(&mut self) -> Option<TranceVibeDevice> {
         let devices = match self.context.devices() {
             Ok(d) => d,
-            Err(_) => return None
+            Err(_) => return None,
         };
 
         for mut dev in devices.iter() {
             let device_desc = match dev.device_descriptor() {
                 Ok(d) => d,
-                Err(_) => continue
+                Err(_) => continue,
             };
-            if device_desc.vendor_id() != VID ||
-                device_desc.product_id() != PID ||
-                dev.bus_number() != self.bus_number ||
-                dev.address() != self.address {
-                    continue;
-                }
+            if device_desc.vendor_id() != VID || device_desc.product_id() != PID ||
+               dev.bus_number() != self.bus_number || dev.address() != self.address {
+                continue;
+            }
             match dev.open() {
-                Ok(h) => return Some(Box::new(TranceVibeDevice::new(h, device_desc))),
-                Err(_) => panic!("Can't open device!")
+                Ok(h) => return Some(TranceVibeDevice::new(h)),
+                Err(_) => panic!("Can't open device!"),
             };
         }
         None
@@ -77,18 +72,17 @@ impl TranceVibeDeviceInfo {
 pub fn get_devices() -> libusb::Result<Vec<TranceVibeDeviceInfo>> {
     let mut context = match libusb::Context::new() {
         Ok(c) => c,
-        Err(_) => panic!("Cannot initialize libusb context!")
+        Err(_) => panic!("Cannot initialize libusb context!"),
     };
     let mut devices = Vec::<TranceVibeDeviceInfo>::new();
     for mut device in try!(context.devices()).iter() {
         let device_desc = match device.device_descriptor() {
             Ok(d) => d,
-            Err(_) => continue
+            Err(_) => continue,
         };
-        if device_desc.vendor_id() != VID ||
-            device_desc.product_id() != PID {
-                continue;
-            }
+        if device_desc.vendor_id() != VID || device_desc.product_id() != PID {
+            continue;
+        }
         devices.push(TranceVibeDeviceInfo::new(device.bus_number(), device.address()));
     }
     Ok(devices)
