@@ -1,8 +1,8 @@
 # libtrancevibe-rs
 
-Have you ever thought "Hey, I have a 13 year old piece of obscure
-gaming hardware, but no way to use it in a safe language! WHY AM I
-DOOMED TO THIS EXISTENCE?"
+Have you ever thought "Hey, I have an obscure gaming hardware from
+2003, but no way to use it in a language with decent safety built in!
+WHY AM I DOOMED TO THIS EXISTENCE?"
 
 Well, doom no more!
 
