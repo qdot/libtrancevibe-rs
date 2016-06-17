@@ -3,26 +3,15 @@ use std::time::Duration;
 use std::thread::sleep;
 
 fn main() {
-    let mut devices = match libtrancevibe::get_devices() {
-        Ok(d) => d,
-        Err(_) => panic!("Cannot enumerate devices!"),
-    };
+    let mut devices = libtrancevibe::get_devices().expect("Cannot enumerate devices!");
 
     println!("Number of devices connected: {}", devices.len());
     if devices.len() == 0 {
         return;
     }
     let mut device = devices.pop().unwrap();
-    let mut dev;
-    match device.open() {
-        Some(d) => dev = d,
-        None => panic!("Can't open device!"),
-    };
-    if dev.set(255).is_err() {
-        panic!("Error setting speed!");
-    }
+    let mut dev = device.open().expect("Can't open device!");
+    dev.set(255).expect("Error setting speed!");
     sleep(Duration::from_secs(1));
-    if dev.set(0).is_err() {
-        panic!("Error setting speed!");
-    }
+    dev.set(0).expect("Error setting speed!");
 }
