@@ -4,6 +4,6 @@ extern crate libusb;
 
 // Only provide outside access via get_devices. Everything should be generated
 // from the output there.
-pub use ::libtrancevibe::{get_devices};
+pub use ::libtrancevibe::{get_devices, TranceVibeDeviceInfo, TranceVibeDevice};
 
-mod libtrancevibe;s
+mod libtrancevibe;
