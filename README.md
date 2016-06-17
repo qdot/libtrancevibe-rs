@@ -1,5 +1,7 @@
 # libtrancevibe-rs
 
+[![Build Status](https://travis-ci.org/metafetish/libtrancevibe-rs.svg?branch=master)](https://travis-ci.org/metafetish/libtrancevibe-rs)
+
 Have you ever thought "Hey, I have a obscure video game peripheral
 from 2003, but no way to use it in a language with decent safety built
 in! WHY AM I DOOMED TO THIS EXISTENCE?"

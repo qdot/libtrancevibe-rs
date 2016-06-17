@@ -1,6 +1,6 @@
 [package]
 name = "libtrancevibe"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Kyle Machulis <kyle@machul.is>"]
 description = "Rust library for accessing the Rez Trancevibrator"
 license = "BSD-3-Clause"
