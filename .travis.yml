@@ -9,4 +9,23 @@ after_success: |
   git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
 env:
   global:
-    secure: VbMfyHA6yXZvqs7GzKkIgdfexCmubFJqXyU/XtOafnu5MvfXs13adheB4nIi843hTxleoa1csrqdJ698u/Liz8k5AhEM2S0o7Om6UqXMNnX2CIBCJ4QPthgnoikxpjlJ0NsDQTfzwJMZvUcuA4rFDijQntGdf4c/Fcm1H0Up+iF58d4noEQEIeicyrQbBQ76t6tgR8+agQg5ZK23x7LLR9OeZFhrWPwIfczxFvsAMitHW9t9FjLlR7d3szCoP8W9NMSaP/waWgxxE88647+np/JxGwbuy2GIYmG+IFBLnKmoHf1705Tn2BACH6UyXTDNV0/DXVZmgcfCfV5mXwsDBVZFwlcuQDdlncdpeCJVm5X/x55JXqelz3f4ZYNlZJyeAtDJGkLxRa5Ir5f+r4weUoycY83b55vYHZZeU6hG+OAIZkVr+zPnA37A7UdKcpVcZe9V+Xn7JzldA16toip1BfFN2NOVPIxFtN2bkVrFAtS5QG1Hk2ru6FKEbfrblaO5we+FgWRrw187lxtt51abAc0lpl40SarvBB9NS/xNQ96G4WYIGzVKAbpb6G0+r/yUrqcqalc/USULtIE6OvxNCQhJHB9YldkVlkivG2/a3ua0cV0bFpj2pFMzIEbOTr59KhxYsn0wi4sruA65fzT6ugceaA/wQ2fmlDl2tDixNSs=
+  - secure: VbMfyHA6yXZvqs7GzKkIgdfexCmubFJqXyU/XtOafnu5MvfXs13adheB4nIi843hTxleoa1csrqdJ698u/Liz8k5AhEM2S0o7Om6UqXMNnX2CIBCJ4QPthgnoikxpjlJ0NsDQTfzwJMZvUcuA4rFDijQntGdf4c/Fcm1H0Up+iF58d4noEQEIeicyrQbBQ76t6tgR8+agQg5ZK23x7LLR9OeZFhrWPwIfczxFvsAMitHW9t9FjLlR7d3szCoP8W9NMSaP/waWgxxE88647+np/JxGwbuy2GIYmG+IFBLnKmoHf1705Tn2BACH6UyXTDNV0/DXVZmgcfCfV5mXwsDBVZFwlcuQDdlncdpeCJVm5X/x55JXqelz3f4ZYNlZJyeAtDJGkLxRa5Ir5f+r4weUoycY83b55vYHZZeU6hG+OAIZkVr+zPnA37A7UdKcpVcZe9V+Xn7JzldA16toip1BfFN2NOVPIxFtN2bkVrFAtS5QG1Hk2ru6FKEbfrblaO5we+FgWRrw187lxtt51abAc0lpl40SarvBB9NS/xNQ96G4WYIGzVKAbpb6G0+r/yUrqcqalc/USULtIE6OvxNCQhJHB9YldkVlkivG2/a3ua0cV0bFpj2pFMzIEbOTr59KhxYsn0wi4sruA65fzT6ugceaA/wQ2fmlDl2tDixNSs=
+  - secure: koApXIh/rwiLo+dQnhLapkxh0/A7AWqur7nS8hu26JvwFwkdy7UIptBUPnXHleh7pt7PWwmBqXpptcs+Y0iKnU+gf99kcElhALHGRsEBdcrDw9gjMjfzpav6phk7StM1755/09mT+9tSN/ERnjft9PxoytosYgm4SDjLrejSk/lhls+1BnipzvAlQ56Ec13OqrWwVE6fglSO7r/S/2WS0b22rw3BijRf1669MBGxDXl3heigf9pI3XYmfXAi2L6VGPPCH43HPgjfDPoH/4YyKv5QlZfiCQvBStbgNk2HdIabi31lCaWMnFVdIz4EDHqRtb1hRle19BlSjRB5B2ZtAErwwHKXrt+PO23oxZ7UqLzYhybaYW/zMo3FrWcdCDWjyL+AfDLBGssbM++dOAoqgxpHSwp9aj1CPeKRsAxozF2kZPX5QaHo50gWTtHk4pkrJi8YBEbMKamaYZn5zRdX8WtszSq/EK4zxfnUvpihh9G6bL7BxhTbFZL2VlUffjwj/ZMCJcF67REwKY8k96Pi2eZN4RtSVo2ZxBhjro0eEj01orjS6zRpKZAPy+DMGYLv4oL7LR4YhKNE1+jF4NHY5P2CNsTaKb9egMMWZKLpTZRDOUBFr3rBn/U0U2kWm4cFb2nr9J1Hy38LYEQOjnY2oAI8yo4gxG3jeystpQfUMLM=
+
+addons:
+  apt:
+    packages:
+      - build-essential
+      - libudev-dev
+
+before_install:
+  - wget https://github.com/libusb/libusb/archive/v1.0.20.tar.gz -O libusb-1.0.20.tar.gz
+  - tar -zxvf libusb-1.0.20.tar.gz
+  - cd libusb-1.0.20 && ./autogen.sh && ./configure --prefix=$HOME/local && make && make install
+  - PKG_CONFIG_PATH=$HOME/local/lib/pkgconfig pkg-config --list-all
+  - PKG_CONFIG_PATH=$HOME/local/lib/pkgconfig pkg-config --libs libusb-1.0
+  - PKG_CONFIG_PATH=$HOME/local/lib/pkgconfig pkg-config --modversion libusb-1.0
+
+script:
+  - PKG_CONFIG_PATH=$HOME/local/lib/pkgconfig LD_LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH cargo build --verbose
+  - PKG_CONFIG_PATH=$HOME/local/lib/pkgconfig LD_LIBRARY_PATH=$HOME/local/lib:$LD_LIBRARY_PATH cargo test --verbose
