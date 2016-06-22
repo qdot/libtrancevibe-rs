@@ -20,3 +20,8 @@ install:
 build_script:
   - cargo build
   - cargo package
+skip_commits:
+  files:
+    - README.md
+    - .travis.yml
+  
