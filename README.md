@@ -1,6 +1,6 @@
 # libtrancevibe-rs
 
-[![Build Status](https://travis-ci.org/metafetish/libtrancevibe-rs.svg?branch=master)](https://travis-ci.org/metafetish/libtrancevibe-rs)
+[![Build Status](https://travis-ci.org/metafetish/libtrancevibe-rs.svg?branch=master)](https://travis-ci.org/metafetish/libtrancevibe-rs) [![Build status](https://ci.appveyor.com/api/projects/status/0kiy0e0vw81lytyx?svg=true)](https://ci.appveyor.com/project/qdot/libtrancevibe-rs) [![Crates.io](https://img.shields.io/crates/v/libtrancevibe.svg)](https://crates.io/crates/libtrancevibe) #
 
 Have you ever thought "Hey, I have a obscure video game peripheral
 from 2003, but no way to use it in a language with decent safety built
