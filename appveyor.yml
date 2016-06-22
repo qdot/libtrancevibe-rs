@@ -1,4 +1,4 @@
-version: "0.1.0.{build}"
+version: "0.2.0.{build}"
 environment:
   matrix:
   - TARGET: nightly-x86_64-pc-windows-msvc
@@ -11,10 +11,12 @@ install:
   - ps: $env:PATH="$env:PATH;C:\rust\bin"
   - rustc -vV
   - cargo -vV
+  - erase rust-install.exe
   - ps: Start-FileDownload "http://downloads.sourceforge.net/project/libusb/libusb-1.0/libusb-1.0.20/libusb-1.0.20.7z?use_mirror=heanet" -FileName "libusb.7z"
   - ps: 7z x -oc:\lib libusb.7z
-  - mkdir .cargo
-  - copy util\cargo-config-win.toml .cargo\config
+  - erase libusb.7z
+  - mkdir $HOME\.cargo
+  - copy util\cargo-config-win.toml $HOME\.cargo\config
 build_script:
   - cargo build
   - cargo package
