@@ -17,7 +17,7 @@ TranceVibrator.
 
 - A Rez Trancevibrator
 - libusb (the libusb cargo requirement will complain otherwise)
-- Something to vibrate
+- Something or someone to vibrate
 
 ## License
 
